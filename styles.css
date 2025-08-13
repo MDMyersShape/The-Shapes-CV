@@ -1,0 +1,271 @@
+/* =========================
+   Variables & Global Easing
+   ========================= */
+:root {
+  --g-speed: 28s;
+  --g-ease: cubic-bezier(0.77, 0, 0.175, 1);
+  --card-blur: 8px;
+  --text-color: #0b0b0b;
+  --accent: #00bcd4;
+  --accent-dark: #4b0082;
+  --glow-x: 20%;
+  --glow-y: 80%;
+}
+
+/* ===============
+   Base & Resets
+   =============== */
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+    linear-gradient(135deg,
+      #000000 0%,
+      #1a0830 25%,
+      #2e0b45 45%,
+      #4b0082 65%,
+      #007a92 85%,
+      #00bcd4 100%
+    );
+  background-blend-mode: overlay;
+  background-size: 400% 400%;
+  animation: gradientShift var(--g-speed) var(--g-ease) infinite;
+
+  padding: 40px 20px;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  40%  { background-position: 100% 50%; }
+  60%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes sweep {
+  0%   { transform: translate(-30%, -30%) rotate(0.001deg); opacity: 0; }
+  20%  { transform: translate(-10%, -10%) rotate(0.001deg); opacity: 0.12; }
+  40%  { transform: translate(30%, 30%) rotate(0.001deg); opacity: 0.2; }
+  60%  { transform: translate(30%, 30%) rotate(0.001deg); opacity: 0.2; }
+  80%  { transform: translate(10%, 10%) rotate(0.001deg); opacity: 0.12; }
+  100% { transform: translate(-30%, -30%) rotate(0.001deg); opacity: 0; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.05; }
+  50%      { opacity: 0.08; }
+}
+
+@media (max-width: 768px) {
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.03; }
+    50%      { opacity: 0.05; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html, body { animation: none; background-size: auto; background-attachment: fixed; }
+}
+
+/* ===============
+   Container Card
+   =============== */
+.container {
+  position: relative;
+  overflow: hidden;
+  max-width: 800px;
+  margin: auto;
+  padding: 40px;
+  background: white; /* Solid white for readability */
+
+  border-radius: 16px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Animated gradient border using ::before */
+.container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 3px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark), var(--accent), var(--accent-dark));
+  background-size: 400% 400%;
+  animation: gradientShift var(--g-speed) var(--g-ease) infinite;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Sweeping light over border */
+.container::after {
+  content: "";
+  position: absolute;
+  inset: -25%;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(45deg,
+    rgba(255,255,255,0) 40%,
+    rgba(255,255,255,0.14) 50%,
+    rgba(255,255,255,0) 60%
+  );
+  mix-blend-mode: soft-light;
+  filter: blur(8px);
+  animation: sweep var(--g-speed) var(--g-ease) infinite;
+}
+
+/* ===============
+   Header Layout
+   =============== */
+.cv-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.profile-pic img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+}
+
+.header-text { flex: 1; }
+
+h1 { font-size: 2rem; margin-bottom: 5px; }
+h2 { color: #2c3e50; border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 40px; }
+p, li { font-size: 1rem; line-height: 1.6; }
+.contact p { margin: 4px 0; }
+ul { padding-left: 20px; }
+a { color: #2c3e50; text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:focus { outline: 3px solid rgba(0, 188, 212, 0.4); outline-offset: 3px; }
+
+/* ==========================
+   Alternating Two-Column Sections
+   ========================== */
+section.skills,
+section.education,
+section.projects {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Content boxes with solid white background + animated gradient border */
+section.skills > *:nth-child(n),
+section.education > *:nth-child(n),
+section.projects  > *:nth-child(n) {
+  position: relative;
+  overflow: hidden;
+  padding: 15px;
+  border-radius: 8px;
+  background: white;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Gradient border animation for boxes */
+section.skills > *:nth-child(n)::before,
+section.education > *:nth-child(n)::before,
+section.projects  > *:nth-child(n)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark), var(--accent), var(--accent-dark));
+  background-size: 400% 400%;
+  animation: gradientShift var(--g-speed) var(--g-ease) infinite;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Sweep light effect for each box */
+section.skills > *:nth-child(n)::after,
+section.education > *:nth-child(n)::after,
+section.projects  > *:nth-child(n)::after {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  pointer-events: none;
+  background: linear-gradient(45deg,
+    rgba(255,255,255,0) 40%,
+    rgba(255,255,255,0.10) 50%,
+    rgba(255,255,255,0) 60%
+  );
+  mix-blend-mode: soft-light;
+  filter: blur(8px);
+  animation: sweep var(--g-speed) var(--g-ease) infinite;
+}
+
+section.skills ul,
+section.education ul,
+section.projects  ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style-position: inside;
+}
+
+/* ==========================
+   Responsive Adjustments
+   ========================== */
+@media (max-width: 768px) {
+  body { padding: 20px 10px; }
+  .container { padding: 20px; }
+  .profile-pic img { width: 120px; height: 120px; }
+  section.skills,
+  section.education,
+  section.projects {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .cv-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .header-text { flex: unset; }
+  h1 { font-size: 1.5rem; }
+  p, li { font-size: 0.95rem; }
+}
+
+/* ===============
+   Print Styles
+   =============== */
+@media print {
+  html, body { background: #fff !important; color: #000 !important; animation: none !important; }
+  .container {
+    background: #fff !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+  section.skills > *:nth-child(n),
+  section.education > *:nth-child(n),
+  section.projects  > *:nth-child(n) {
+    background: #fff !important;
+    border-color: #ccc !important;
+    animation: none !important;
+  }
+}
